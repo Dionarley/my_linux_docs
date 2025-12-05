@@ -1,0 +1,107 @@
+################### net_tools_iproute2 ###################
+
+
+
+O pacote iproute2 é a suíte moderna de ferramentas de rede para Linux, substituindo o antigo net-tools (como ifconfig, route, netstat), oferecendo funcionalidades avançadas para gerenciar roteamento, interfaces, túneis, controle de tráfego (QoS) e mais, através de comandos como ip, ss e tc, que se comunicam diretamente com o kernel via Netlink para configurações mais poderosas e unificadas. 
+Principais Ferramentas no iproute2:
+ip: O comando "coringa" que substitui ifconfig, route, arp, iptunnel, iwconfig, nameif, etc. Gerencia links de rede, endereços IP, tabelas de roteamento, vizinhos (ARP) e túneis.
+ss: Ferramenta para inspecionar sockets e estatísticas de rede, substituindo netstat.
+tc: Para controle de tráfego (Traffic Control), permitindo gerenciamento avançado de QoS (Qualidade de Serviço).
+bridge: Ferramenta para gerenciar pontes de rede (Linux Bridge).
+rtmon: Monitoramento de eventos de roteamento.
+nstat: Estatísticas de rede. 
+Por Que iproute2 é Superior:
+Unificação: Agrupa funcionalidades de múltiplos comandos antigos em um só (ip).
+Recursos Avançados: Suporta tabelas de roteamento múltiplas, regras complexas e controle de tráfego fino, algo que net-tools não conseguia.
+Padrão Moderno: É o sistema de configuração de rede atual e recomendado para Linux, com a maioria das distribuições já o utilizando como padrão. 
+Exemplo de Uso (Substituindo ifconfig e route):
+Para ver interfaces e IPs: ip addr show (substitui ifconfig).
+Para ver a tabela de roteamento: ip route show (substitui route).
+Para adicionar um IP: ip addr add 192.168.1.10/24 dev eth0. 
+Em resumo, o iproute2 é essencial para administradores de rede Linux, oferecendo uma forma mais eficiente e completa de gerenciar a rede. 
+
+
+############################################################
+
+  
+ip utility, iproute2-6.17.0, libbpf 1.6.2
+  
+  ip
+  Mostra / manipula roteamento, dispositivos, roteamento baseado em póliticas e túneis.  Alguns subcomandos como `address` têm suas pŕoprias documentações de uso.  Mais informações: https://manned.org/ip.8.
+  - Lista interfaces com informações detalhadas:    ip address
+  - Lista interfaces com breves informações sobre a camada de rede:    ip -brief address
+  - Lista interfaces com breves informações sobre a camada de link de dados:    ip -brief link
+  - Exibe a tabela de roteamento:    ip route
+  - Mostra vizinhos (ARP tabela):    ip neighbour
+  - Ativa / desativa uma interface:    sudo ip link set interface up|down
+  - Adiciona / remove um endereço de IP a uma interface:    sudo ip address add|delete ip/mask dev interface
+  - Adiciona uma rota padrão:    sudo ip route add default via ip dev interface
+
+
+  
+ss utility, iproute2-6.17.0
+  
+  ss
+  Utility to investigate sockets.  More information: https://manned.org/ss.
+  - Show all TCP/UDP/RAW/UNIX sockets:    ss --all -t|-u|-w|-x
+  - Filter TCP sockets by states, only/exclude:    ss state|exclude bucket|big|connected|synchronized|...
+  - Show all TCP sockets connected to the local HTTPS port (443):    ss --tcp src :443
+  - Show all TCP sockets listening on the local 8080 port:    ss --listening --tcp src :8080
+  - Show all TCP sockets along with processes connected to a remote SSH port:    ss --processes --tcp dst :ssh
+  - Show all UDP sockets connected on specific source and destination ports:    ss --udp 'sport == :source_port and dport == :destination_port'
+  - Show all TCP IPv4 sockets locally connected on the subnet 192.168.0.0/16:    ss --ipv4 --tcp src 192.168/16
+  - Kill IPv4 or IPv6 Socket Connection with a specific destination IP and port:    ss --kill dst ip_address dport = port
+
+
+
+  
+tc utility, iproute2-6.17.0, libbpf 1.6.2
+  
+  tc
+  Show/manipulate traffic control settings.  More information: https://manned.org/tc.
+  - Add constant network delay to outbound packages:    sudo tc qdisc add dev eth0 root netem delay delay_in_millisecondsms
+  - Add normal distributed network delay to outbound packages:    sudo tc qdisc add dev eth0 root netem delay mean_delay_msms delay_std_msms
+  - Add package corruption/loss/duplication to a portion of packages:    sudo tc qdisc add dev eth0 root netem corruption|loss|duplication effect_percentage%
+  - Limit bandwidth, burst rate and max latency:    sudo tc qdisc add dev eth0 root tbf rate max_bandwidth_mbmbit burst max_burst_rate_kbkbit latency max_latency_before_drop_msms
+  - Show active traffic control policies:    tc qdisc show dev eth0
+  - Delete all traffic control rules:    sudo tc qdisc delete dev eth0
+  - Change traffic control rule:    sudo tc qdisc change dev eth0 root netem policy policy_parameters
+
+
+
+  
+bridge utility, 6.17.0
+  bridge
+  Show and manipulate network bridge addresses and devices.  More information: https://manned.org/bridge.
+  - List all bridges and their interfaces:    bridge link
+  - Show port vlan information:    bridge vlan
+  - Assign a VLAN to a port:    sudo bridge vlan add dev lanX vid vlan_id pvid tagged|untagged
+  - Remove a VLAN from a port:    sudo bridge vlan delete dev lanX vid vlan_id
+  - Watch for changes in bridge interfaces:    bridge monitor
+  - Display help:    bridge help
+
+
+
+  
+rtmon utility, iproute2-6.17.0
+  
+  rtmon
+  Save network state changes to a file.  More information: https://manned.org/rtmon.
+  - Save all network state changes to a file:    sudo rtmon file path/to/file
+  - Specify the type of change to log:    sudo rtmon file link|address|route
+
+
+
+
+  
+nstat utility, iproute2-6.17.0
+  
+  nstat
+  View network statistics.  More information: https://manned.org/nstat.
+  - View network statistics since last time [3mnstat[23m was run:    nstat
+  - View all-time network statistics:    nstat --ignore
+  - Display help:    nstat --help
+
+
+
+
